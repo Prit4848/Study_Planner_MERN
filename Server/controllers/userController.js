@@ -1,9 +1,8 @@
 const userModel = require("../models/user-model");
-const bcrypt = require("bcrypt");
-const { generateToken } = require("../utils/generateTokens");
-const nodemailer = require("nodemailer"); // for sending the email
 const blacklistModel = require("../models/blacklist-model");
-const {validationResult} = require("express-validator")
+const userServices = require('../Services/user.services')
+const {validationResult} = require("express-validator");
+
 
 require("dotenv").config();
 
@@ -15,19 +14,7 @@ module.exports.registerUser = async function (req, res) {
   try {
     let { username, email, password, phone_no } = req.body;
 
-    let exist = await userModel.findOne({email});
-    if (exist)
-      return res.status(401).json({Message:"Alredy Have an Account Login"})
-
-    const salt = await bcrypt.genSalt(12);
-    const hash = await bcrypt.hash(password, salt);
-
-    const user = await userModel.create({
-      phone_no,
-      username,
-      email,
-      password: hash,
-    });
+    const user = userServices.CreateUser({username,email,password,phone_no})
 
     res.status(201).json({user:user})
   } catch (err) {
@@ -45,17 +32,10 @@ module.exports.loginUser = async function (req, res) {
   }
   try {
     const { email, password } = req.body;
-    const user = await userModel.findOne({ email: email });
-    if (!user) return res.status(401).json({message:"email or password Incorect!"})
+    
+    const {user,token} = await userServices.loginuser({email,password})
 
-    const isMatch = bcrypt.compare(password, user.password)
-    if(isMatch){
-      const token = generateToken(user)
-      res.cookie("token",token)
-      res.status(201).json({token:token,user:user})
-    }else{
-      res.status(401).json("email or password Incorect!")
-    }
+    res.status(200).json({user,token})
   } catch (err) {
     res.status(500).json({
       message:"server Error"
@@ -106,17 +86,8 @@ module.exports.AccountUpdate = async function (req, res) {
     const { username, phone_no, Bio } = req.body;
     const {email} = req.user;
 
-    const user = await userModel.findOneAndUpdate(
-      { email},
-      {
-        Bio,
-        username,
-        phone_no,
-      },
-      { new: true }
-    );
-
-    await user.save();
+    const user = await userServices.updateAccount({email,Bio,username,phone_no})
+    
     res.status(201).json({message:"update data succesfully!",user:user})
   } catch (err) {
     res.send(err.message);
@@ -133,23 +104,7 @@ module.exports.contactUs = async (req, res) => {
   try {
     let { name, email, message } = req.body;
 
-    const transporter = nodemailer.createTransport({
-      host: `smtp.gmail.com`,
-      secure: false,
-      port: 587,
-      auth: {
-        user: `${process.env.EMAIL_USER}`,
-        pass: `${process.env.EMAIL_PASS}`,
-      },
-    });
-
-    const mailOptions = {
-      from: `${process.env.EMAIL_USER}`,
-      to: `${process.env.MYEMAIL}`,
-      subject: "user can contact with us",
-      text: ` My name is: ${name},email ${email} and my messege ${message}`,
-    };
-
+    const {transporter,mailOptions} = await userServices.ContactUsSendMail({name,email,message})
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
         return res.status(500).send(error);
@@ -173,25 +128,8 @@ module.exports.postforgot_password = async (req, res) => {
   
   try {
     let { email } = req.body;
-    const otp = Math.floor(100000 + Math.random() * 900000);
-    await userModel.findOneAndUpdate({ email }, { otp }, { new: true });
-
-    const transporter = nodemailer.createTransport({
-      host: `smtp.gmail.com`,
-      secure: false,
-      port: 587,
-      auth: {
-        user: `${process.env.EMAIL_USER}`,
-        pass: `${process.env.EMAIL_PASS}`,
-      },
-    });
-
-    const mailOptions = {
-      from: `${process.env.EMAIL_USER}`,
-      to: email,
-      subject: "Your OTP for Password Reset",
-      text: `Your OTP is: ${otp}`,
-    };
+    
+    const {transporter,mailOptions} = await userServices.ForgotPassword({email})
 
     transporter.sendMail(mailOptions, (error, info) => {
       if (error) {
@@ -209,22 +147,10 @@ module.exports.postforgot_password = async (req, res) => {
 module.exports.postEnter_otp = async (req, res) => {
   try {
     const { email, newotp } = req.body;
-
-    // Find the user by email
-    let user = await userModel.findOne({ email });
-
-    // Check if user exists
-    if (!user) {
-      return res
-        .status(404)
-        .send("User not found. Please check the email address.");
-    }
-
-    // Verify the OTP
-    if (user.otp != newotp) {
-      return res.status(400).send("Wrong OTP, please enter the correct OTP.");
-    }
-    res.status(201).json({email:email})
+ 
+    const otp_email = await  userServices.EnterOtp({email,newotp})
+    
+    res.status(201).json({email:otp_email})
   } catch (error) {
     console.log(error);
     res.status(500).send("Internal Server Error");
@@ -234,47 +160,16 @@ module.exports.postEnter_otp = async (req, res) => {
 module.exports.postChange_password = async (req, res) => {
   try {
     let { email, newpassword } = req.body;
-    console.log(newpassword);
-    // Ensure the password is provided
-    if (!newpassword) {
-      return res.status(400).send("Password is required.");
-    }
-
-    // Generate a salt
-    const salt = await bcrypt.genSalt(12);
-    if (!salt) {
-      throw new Error("Failed to generate salt.");
-    }
-
-    // Hash the password using the salt
-    const hash = await bcrypt.hash(newpassword, salt);
-    if (!hash) {
-      throw new Error("Failed to hash the password.");
-    }
-
-    // Update the user's password
-    let user = await userModel.findOneAndUpdate(
-      { email },
-      { password: hash },
-      { new: true }
-    );
-
-    // Save the user
-    await user.save(); // Ensure user is saved after updating
-
-    // Flash success message and redirect
-
-    res.status(201).json({message:"password change successfully"}) // Redirect to login after password change
+    
+     const user = await userServices.ChangePassword({email,newpassword})
+    res.status(201).json({message:"password change successfully",user}) 
   } catch (error) {
     console.log(error);
     res.status(500).send("Internal Server Error");
   }
 };
 
-
-
-
-module.exports.Profile = (req,res,next)=>{
+module.exports.Profile = (req,res)=>{
 try {
   res.status(200).json({user:req.user})
 } catch (error) {

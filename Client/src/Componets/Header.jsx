@@ -101,13 +101,13 @@ const Header = ({ user, isLoggedIn,setisLoggedIn }) => {
                     >
                       Settings
                     </Link>
-                    <a
+                    <Link
                       className="block px-4 py-2 text-sm text-gray-700"
                       role="menuitem"
                       onClick={()=>{setisLoggedIn(flase)}}
                     >
                       How To Use
-                    </a>
+                    </Link>
                   </div>
                 )}
               </div>

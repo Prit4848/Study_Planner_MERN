@@ -29,4 +29,4 @@ app.use('/plan', planRoutes);
 // app.use('/goal', goalRouter);
 // app.use('/api', qrCodeRoute);
 
-module.exports = app
+module.exports = app;

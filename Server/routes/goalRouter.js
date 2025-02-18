@@ -1,22 +1,39 @@
 const express = require("express");
 const router = express.Router();
-const AuthMiddlewear = require("../middleware/AuthMiddlewear")
-const {body} = require("express-validator")
-const goalController = require("../controllers/goalController")
+const AuthMiddlewear = require("../middleware/AuthMiddlewear");
+const goalController = require("../controllers/goalController");
+const GoalMiddlewear = require('../middleware/GoalMiddlewear')
 
-
-router.post("/create-goal",[body('goalTitle').isLength({min:1}).withMessage("minimum lenth of title was 1"),
-                           body('goalDescription').isLength({min:1}).withMessage("minimum lenth of title was 1"),
-                           body('priority').isLength({min:1}).withMessage("minimum lenth of title was 1"),
-                           body('dueDate').isLength({min:1}).withMessage("minimum lenth of title was 1"),
-],AuthMiddlewear.AuthUser,)
-router.get("/:goalid/:userid/view",AuthMiddlewear.AuthUser,)
-router.get("/:goalid/:userid/edit",AuthMiddlewear.AuthUser,)
-router.post("/:goalid/:userid/edit",[body('goalTitle').isLength({min:1}).withMessage("minimum lenth of title was 1"),
-    body('goalDescription').isLength({min:1}).withMessage("minimum lenth of title was 1"),
-    body('priority').isLength({min:1}).withMessage("minimum lenth of title was 1"),
-    body('dueDate').isLength({min:1}).withMessage("minimum lenth of title was 1"),
-],AuthMiddlewear.AuthUser,)
-router.post("/delete/:goalid",)
-router.post("/:goalid/toggle",AuthMiddlewear.AuthUser,)
+router.post(
+  "/create-goal",
+  GoalMiddlewear.CreateGoalValidator,
+  AuthMiddlewear.AuthUser,
+  goalController.createGoal
+);
+router.get(
+  "/:goalid/:userid/view",
+  AuthMiddlewear.AuthUser,
+  goalController.editGoal
+);
+router.get(
+  "/:goalid/:userid/edit",
+  AuthMiddlewear.AuthUser,
+  goalController.editGoal
+);
+router.post(
+  "/:goalid/:userid/edit",
+   GoalMiddlewear.EditGoalValidator,
+  AuthMiddlewear.AuthUser,
+  goalController.postEditGoal
+);
+router.post(
+  "/delete/:goalid",
+  AuthMiddlewear.AuthUser,
+  goalController.deleteGoal
+);
+router.post(
+  "/complete/goalid",
+  AuthMiddlewear.AuthUser,
+  goalController.completionGoal
+);
 module.exports = router;

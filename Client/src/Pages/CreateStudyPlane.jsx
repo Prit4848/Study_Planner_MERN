@@ -7,7 +7,7 @@ const CreateStudyPlan = () => {
   const handleAddTask = () => {
     setTasks([...tasks, { startTime: '', endTime: '', title: '', description: '' }]);
   };
-
+  console.log(tasks)
   useEffect(() => {
     const revealElements = document.querySelectorAll('.reveal');
 

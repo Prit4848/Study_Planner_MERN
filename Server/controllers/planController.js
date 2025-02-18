@@ -1,6 +1,7 @@
 
 const planModel = require("../models/plan-model")
 const userModel = require("../models/user-model")
+const planServices = require("../Services/plan.services")
 const {validationResult} = require("express-validator")
 const cron = require('node-cron');
 const { client }= require("../middleware/whatsapp")
@@ -18,57 +19,8 @@ module.exports.postcreatePlans = async (req, res)=> {
     try {
         const { title, description, date, tasks } = req.body;
         const Attachment = req.file; 
-        const user = await userModel.findOne({ _id: req.user });
-
-        if (!user) {
-            return res.status(404).send("User not found");
-        }
-
-        const today = new Date();
-        const todayDateString = today.toDateString();
-        const lastPlanDateString = user.lastPlanDate ? user.lastPlanDate.toDateString() : null;
-
-        if (lastPlanDateString === todayDateString || new Date(lastPlanDateString).getTime() === (new Date(today).getTime() - 86400000)) {
-            user.streak = (lastPlanDateString === todayDateString) ? user.streak : user.streak + 1;
-        } else {
-            user.streak = 1;
-        }
-
-        user.lastPlanDate = today;
-
-        if (!tasks || !Array.isArray(tasks)) {
-            return res.status(400).send("Tasks are required and should be an array");
-        }
-
-        // Prepare plan data
-        const planData = {
-            userId: user._id,
-            title,
-            description,
-            date,
-            tasks: tasks.map(task => ({
-                title: task.title,
-                description: task.description,
-                startTime: task.startTime,
-                endTime: task.endTime
-            }))
-        };
-
-        // Handle attachment
-        if (Attachment) {
-            planData.Attachment = {
-                filename: Attachment.originalname,
-                data: Attachment.buffer,  // Store the buffer data
-                contentType: Attachment.mimetype
-            };
-        }
-
-        // Create the plan
-        const plan = await planModel.create(planData);
-        await user.save();
-
-        return res.status(201).json({plan:plan})
-        
+        const plan = await planServices.createPlan({title,description,date,tasks,Attachment})
+        return res.status(200).json({plan})
     } catch (err) {
         console.error(err);
         res.status(500).send("Internal server error");
@@ -83,24 +35,11 @@ module.exports.postcreatePlans = async (req, res)=> {
       }
     try {
         const { title, description, date, tasks } = req.body;
+        const planId = req.params.planid;
+        const userId = req.user;
 
-        // Ensure tasks is defined and is an array
-        if (!tasks || !Array.isArray(tasks)) {
-            return res.status(400).send("Tasks are required and should be an array");
-        }
-
-        // Find the plan and update its fields
-        const plan = await planModel.findOneAndUpdate(
-            { _id: req.params.planid, userId: req.user },
-            { title, description, date, tasks },
-            { new: true } // To return the updated document
-        );
-
-        if (!plan) {
-            return res.status(404).send("Plan not found");
-        }
-
-        res.status(201).json({plan:plan})
+        const plan = await planServices.EditPlan({title,description,date,tasks,planId,userId})
+        res.status(200).json({plan})
     } catch (err) {
         console.error(err);
         res.status(500).send("Internal server error");
@@ -110,18 +49,12 @@ module.exports.postcreatePlans = async (req, res)=> {
 
 module.exports.postTaskCompletion = async function(req,res){
     try{
+        const planId = req.params.planid;
+        const taskId = req.params.taskid;
 
-        let plan = await planModel.findOne({_id:req.params.planid})
-        if(!plan){
-            return res.status(404).send('Plan not found');
-        }
-        let task = plan.tasks.id(req.params.taskid);
-        if (!task) {
-            return res.status(404).send('Task not found');
-          }
-          task.completed = !task.completed;
-          await plan.save();
-          res.status(200).json({message:"task "})
+        const task_Completion = await planServices.CompleteTask({planId,taskId})
+         
+        res.status(200).json({message:"task are complete",task_Completion})
     }
     catch(err){
         console.error(err);
@@ -131,10 +64,9 @@ module.exports.postTaskCompletion = async function(req,res){
 
 module.exports.postDelete = async function(req, res) {
     try {
-       
-        await planModel.deleteOne({ _id: req.params.planid });
-
+         const planId =  req.params.planid;
         
+        await planServices.DeletePlan({planId})
         res.status(200).json({message:"plan delete successfully"}); 
     } catch (err) {
         console.error(err);
