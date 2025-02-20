@@ -80,41 +80,14 @@ module.exports.setReminder = async function(req, res) {
       if(!error.isEmpty()){
         return res.status(404).json({error:error.array()})
       }
-    const { reminderDate } = req.body;
-    const phone_no = req.user.phone_no;
-    const userId = req.user._id;
-    const planId = req.params.planId;
-    console.log(phone_no)
+    
     try {
-        let plan = await planModel.findOne({ _id: req.params.planId });
-
-        const reminderDateObj = new Date(reminderDate);
-        const tasksInfo = plan.tasks.map(task => `${task.title} (${task.startTime} - ${task.endTime})`).join(', ');
-        const messageBody = `Reminder for your plan: ${plan.title} - ${plan.description}. Tasks: ${tasksInfo}`;
-
-        console.log(messageBody);
-
-        // Schedule the WhatsApp message
-        const job = cron.schedule(
-            `${reminderDateObj.getUTCSeconds()} ${reminderDateObj.getUTCMinutes()} ${reminderDateObj.getUTCHours()} ${reminderDateObj.getUTCDate()} ${reminderDateObj.getUTCMonth() + 1} *`,
-            () => {
-                client.sendMessage(`91${phone_no}@c.us`, messageBody)
-                .then(response => {
-                    console.log(`Message sent to ${phone_no}: ${response.id._serialized}`);
-                })
-                .catch(err => {
-                    console.error('Failed to send WhatsApp message', err);
-                });
-            },
-            {
-                timezone: 'UTC'
-            }
-        );
-         console.log(job.id)
-        // Save the scheduled job for later reference if needed
-        plan.reminderJobId = job.id;
-        console.log(plan.reminderJobId);
-        await plan.save();
+        const { reminderDate } = req.body;
+        const phone_no = req.user.phone_no;
+        const userId = req.user._id;
+        const planId = req.params.planId;
+        
+        await planServices.setreminder({reminderDate,phone_no,userId,planId})
 
         res.status(200).json({message:"set reminder successfully"})
     } catch (err) {
@@ -126,11 +99,9 @@ module.exports.setReminder = async function(req, res) {
 
 module.exports.attachment = async (req,res)=>{
     try {
-        let plan = await planModel.findById(req.params.planId);
-        if (!plan || !plan.Attachment) {
-            return res.status(404).send('Attachment not found');
-        }
-
+        const planId = req.params.planId
+        
+        const plan = await planServices.Attachment({planId})
         
         res.status(200).json({pdf:plan.Attachment.data.buffer,contentType:plan.Attachment.contentType})
     } catch (err) {

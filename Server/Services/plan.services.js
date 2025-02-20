@@ -1,5 +1,7 @@
 const planModel = require('../models/plan-model')
 const userModel = require('../models/user-model')
+const cron = require('node-cron');
+const { client }= require("../middleware/whatsapp")
 
 module.exports.createPlan = async({title,description,date,tasks,Attachment})=>{
     
@@ -102,4 +104,55 @@ module.exports.DeletePlan = async ({planId})=>{
     }
     await planModel.deleteOne({ _id:planId });
     return;
+}
+
+module.exports.setreminder = async ({reminderDate,phone_no,userId,planId})=>{
+  
+    if(!reminderDate || !phone_no || !userId || !planId){
+        throw new Error('{reminderDate,phone_no,userId,planId} All Fields Are Required')
+    }
+
+    const plan = await planModel.findOne({ _id: planId });
+
+        const reminderDateObj = new Date(reminderDate);
+        const tasksInfo = plan.tasks.map(task => `${task.title} (${task.startTime} - ${task.endTime})`).join(', ');
+        const messageBody = `Reminder for your plan: ${plan.title} - ${plan.description}. Tasks: ${tasksInfo}`;
+
+        console.log(messageBody);
+
+        
+        const job = cron.schedule(
+            `${reminderDateObj.getUTCSeconds()} ${reminderDateObj.getUTCMinutes()} ${reminderDateObj.getUTCHours()} ${reminderDateObj.getUTCDate()} ${reminderDateObj.getUTCMonth() + 1} *`,
+            () => {
+                client.sendMessage(`91${phone_no}@c.us`, messageBody)
+                .then(response => {
+                    console.log(`Message sent to ${phone_no}: ${response.id._serialized}`);
+                })
+                .catch(err => {
+                    console.error('Failed to send WhatsApp message', err);
+                });
+            },
+            {
+                timezone: 'UTC'
+            }
+        );
+         console.log(job.id)
+        
+        plan.reminderJobId = job.id;
+        console.log(plan.reminderJobId);
+        await plan.save();
+
+        return 
+}
+
+module.exports.Attachment =async ({planId})=>{
+  if(!planId){
+    throw new Error('planId is Required')}
+
+    const plan = await planModel.findById(req.params.planId);
+        if (!plan || !plan.Attachment) {
+            return res.status(404).send('Attachment not found');
+        }
+  
+   return plan;
 }
