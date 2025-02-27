@@ -1,6 +1,6 @@
 import axios from 'axios'
 import React, { createContext, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+
 
 export const Context = createContext()
 const UserContext = ({children}) => {
@@ -8,7 +8,11 @@ const UserContext = ({children}) => {
     const token = localStorage.getItem("token")
 
     useEffect(() => {
-     
+     if(!token){
+      return <>
+      {children}
+      </>
+     }
      const featchProfile =async ()=>{
       await axios.get(`${import.meta.env.VITE_BASE_URL}/user/Profile`,{headers:{Authorization: `Bearer${token}`}})
       .then((response)=>{

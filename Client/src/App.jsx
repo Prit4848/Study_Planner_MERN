@@ -19,6 +19,8 @@ import Support from './Pages/Support'
 import WhyUs from './Pages/WhyUs'
 import AboutUs from './Pages/AboutUs'
 import Features from './Pages/Features'
+import ViewPlan from './Pages/ViewPlan'
+
 
 const App = () => {
   const [email, setemail] = useState('')
@@ -39,6 +41,7 @@ const App = () => {
         <Route path='/User/Settings' element={<UserProtectedWrapper><Settings/></UserProtectedWrapper>}/>
         //Plane Routes
         <Route path='/Create/Plan' element={<CreateStudyPlan/>} />
+        <Route path='/Plan/View' element={<ViewPlan/>} />
         //footer Routes
         <Route path='/Support' element={<Support/>} />
         <Route path='/WhyUs' element={<WhyUs/>} />

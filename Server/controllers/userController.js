@@ -32,10 +32,10 @@ module.exports.loginUser = async function (req, res) {
   }
   try {
     const { email, password } = req.body;
+   
+    const user = await userServices.loginuser({email,password})
     
-    const {user,token} = await userServices.loginuser({email,password})
-
-    res.status(200).json({user,token})
+    res.status(200).json({user})
   } catch (err) {
     res.status(500).json({
       message:"server Error"

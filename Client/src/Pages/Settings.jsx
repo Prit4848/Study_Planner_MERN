@@ -3,6 +3,7 @@ import { Context } from "../Context/UserContext";
 import axios from "axios";
 import { ToastContainer, toast } from 'react-toastify';
 import Header from "../Componets/Header";
+import defaultProfileImage from '../assets/profile.png';
 
 const Settings = () => {
     const {userdata} = useContext(Context)
@@ -14,6 +15,19 @@ const Settings = () => {
     const [isLoggedIn, setisLoggedIn] = useState(true)
     const [user, setuser] = useState(userdata)
     const token = localStorage.getItem('token')
+
+     // Function to get image source
+  const getImageSrc = () => {
+    if (userdata.image && userdata.image.data) {
+      return `data:image/jpeg;base64,${btoa(
+        new Uint8Array(userdata.image.data).reduce(
+          (data, byte) => data + String.fromCharCode(byte),
+          ''
+        )
+      )}`;
+    }
+    return defaultProfileImage; // Use default image if no profile picture is available
+  };
     const HanddleUploadImage = async (e)=>{
         e.preventDefault()
         try {
@@ -60,14 +74,9 @@ const Settings = () => {
           <div className="w-full md:w-1/3">
             <div className="flex flex-col items-center p-5 bg-gray-200 rounded-lg shadow-inner">
               <img
-               src={`data:image/jpeg;base64,${btoa(
-                new Uint8Array(userdata.image.data).reduce(
-                  (data, byte) => data + String.fromCharCode(byte),
-                  ""
-                )
-              )}`}
+               src={getImageSrc()}
+                alt="Profile"
                 className="w-32 h-32 rounded-full"
-                alt="Profile Picture"
               ></img>
               <form
                 onSubmit={(e)=>{HanddleUploadImage(e)}}

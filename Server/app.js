@@ -13,6 +13,7 @@ const planRoutes = require("./routes/planRouters")
 // const indexRouter = require("./routes/indexRouter")
 // const qrCodeRoute = require("./routes/qrCode")
 
+
 require('dotenv').config();
 
 app.use(bodyParser.urlencoded({ extended: true }));

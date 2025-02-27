@@ -27,11 +27,14 @@ const Register = () => {
 
       const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/register`,userData)
 
-      if(response.status == 201){
+      if(response.status == 201 || response.status == 200){
        toast.success("Register Success->Login")
+      }else{
+        toast.error("Email Or Password Are Invalid Choose Another")
       }
     } catch (error) {
       console.log(error)
+      toast.error("Something is wrong Please check the Email or password")
     }
   }
   return (

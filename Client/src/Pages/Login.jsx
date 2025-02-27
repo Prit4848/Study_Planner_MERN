@@ -20,10 +20,10 @@ const Login = () => {
 
       const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/user/login`,userdata)
 
-      if(response.status == 201){
-        const token = response.data.token
+      if(response.status == 201 || response.status == 200){
+        const token = response.data.user.token
         localStorage.setItem("token",token)
-        navigate('/Dashboard')
+         navigate('/Dashboard')
       }
     } catch (error) {
       console.log(error)

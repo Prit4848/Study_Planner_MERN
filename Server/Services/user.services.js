@@ -1,5 +1,6 @@
 const userModel = require('../models/user-model')
 const nodemailer = require('nodemailer')
+const bcrypt = require('bcrypt')
 
 module.exports.CreateUser =async ({username,email,password,phone_no})=>{
     if(!username || !email || !password || !phone_no){
@@ -7,11 +8,11 @@ module.exports.CreateUser =async ({username,email,password,phone_no})=>{
     }
 
     let exist = await userModel.findOne({email});
-    if (exist)
-      throw new Error('User have alredy Exist')
-
+    if (exist){
+      throw new Error('User have alredy Exist')}
+    
     const hashPassword = await userModel.hashPassword(password);
-
+  
     const user = await userModel.create({
       phone_no,
       username,
@@ -30,20 +31,21 @@ module.exports.loginuser = async ({email,password})=>{
     const user = await userModel.findOne({
         email,
     }).select("+password");
-
+   
     if (!user) {
         throw new Error("Invalid credentials");
     }
 
-    const isPasswordCorrect = await userModel.comparePassword(password);
-
+    const isPasswordCorrect = await bcrypt.compare(password,user.password)
+     
     if (!isPasswordCorrect) {
         throw new Error("Invalid credentials");
     }
 
     delete user._doc.password;
     
-    const token = await userModel.generateToken()
+    const token = await userModel.generateToken(user.email)
+    
     return {user,token};
 }
 

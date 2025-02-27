@@ -7,17 +7,18 @@ module.exports.AuthUser = async function (req, res, next) {
     if (!token) {
         return res.status(401).json({ Message: "User Not Authenticated" });
     }
-
     try {
-        const decoded = jwt.verify(token, process.env.JWT_KEY);
-        const user = await userModel.findOne({ email: decoded.email }).select('-password');
         
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        const user = await userModel.findOne({ email: decoded.email }).select('-password');
+
         if (!user) {
             return res.status(404).json({ Message: "User Not Found" });
         }
 
-        req.user = user;
-        next();
+        req.user = user; 
+        next(); 
     } catch (err) {
         console.error("JWT Error:", err.message);
         if (err.name === 'JsonWebTokenError') {

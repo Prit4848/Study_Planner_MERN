@@ -5,6 +5,7 @@ const AuthMiddleware = require("../middleware/AuthMiddlewear");
 const planController = require("../controllers/planController");
 const PlanMiddlewear = require("../middleware/PlanMiddlewear");
 const upload = require("../config/multer-config");
+const userModel = require("../models/user-model");
 
 router.post(
   "/create",
@@ -40,5 +41,7 @@ router.post(
 );
 
 router.get("/:planId/attachment", planController.attachment);
+
+router.get('/allplans',AuthMiddleware.AuthUser,planController.getallPlans)
 
 module.exports = router;

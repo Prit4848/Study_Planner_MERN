@@ -3,13 +3,13 @@ const userModel = require('../models/user-model')
 const cron = require('node-cron');
 const { client }= require("../middleware/whatsapp")
 
-module.exports.createPlan = async({title,description,date,tasks,Attachment})=>{
+module.exports.createPlan = async({title,description,date,tasks,Attachment,userId})=>{
     
             
-    if(!title || !description || !date || !tasks || !Attachment){
+    if(!title || !description || !date || !tasks || !Attachment || !userId){
      throw new Error("All Fiels Are Required")
     }
-    const user = await userModel.findOne({ _id: req.user });
+    const user = await userModel.findOne({ _id: userId });
      if (!user) {
         throw new Error('User Are Required')
             }
@@ -25,7 +25,20 @@ module.exports.createPlan = async({title,description,date,tasks,Attachment})=>{
             }
     
             user.lastPlanDate = today;
-    
+            if (!tasks) {
+                throw new Error('Task data is required');
+            }
+            
+            if (typeof tasks === 'string') {
+                try {
+                    tasks = JSON.parse(tasks); // Convert string to array
+                } catch (error) {
+                    throw new Error('Invalid task data format');
+                }
+            }
+            
+           
+           console.log(tasks)
             if (!tasks || !Array.isArray(tasks)) {
                throw new Error('Task data should Be array')
             }
@@ -154,5 +167,14 @@ module.exports.Attachment =async ({planId})=>{
             return res.status(404).send('Attachment not found');
         }
   
+   return plan;
+}
+
+module.exports.getallplans = async ({userId})=>{
+   if(!userId){
+    throw new Error('planId is Required')
+   }
+   const plan = await planModel.find({userId:userId})
+
    return plan;
 }

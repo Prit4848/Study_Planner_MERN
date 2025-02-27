@@ -1,12 +1,27 @@
 import React, { useContext, useState } from 'react';
 import { Context } from '../Context/UserContext';
 import Header from '../Componets/Header';
+import defaultProfileImage from '../assets/profile.png';
 
 const Profile = () => {
     const [isLoggedIn, setisLoggedIn] = useState(true)
   const {userdata} = useContext(Context)
  
   const [user, setuser] = useState(userdata) 
+  console.log(user)
+
+   // Function to get image source
+   const getImageSrc = () => {
+    if (userdata.image && userdata.image.data) {
+      return `data:image/jpeg;base64,${btoa(
+        new Uint8Array(userdata.image.data).reduce(
+          (data, byte) => data + String.fromCharCode(byte),
+          ''
+        )
+      )}`;
+    }
+    return defaultProfileImage; // Use default image if no profile picture is available
+  };
  return (
     <>
     <Header user={user} isLoggedIn={isLoggedIn} setisLoggedIn={setisLoggedIn}/>
@@ -16,15 +31,10 @@ const Profile = () => {
           {/* Profile Section */}
           <div className="w-full lg:w-1/3 p-6 bg-white text-gray-800 rounded-lg shadow-lg flex flex-col items-center">
             <img
-              src={`data:image/jpeg;base64,${btoa(
-                new Uint8Array(userdata.image.data).reduce(
-                  (data, byte) => data + String.fromCharCode(byte),
-                  ""
-                )
-              )}`}
-              alt="Default Profile"
-              className="rounded-full w-32 h-32 sm:w-48 sm:h-48 mb-4 border-4 border-blue-600"
-            />
+                src={getImageSrc()}
+                alt="Profile"
+                className="rounded-full w-32 h-32 sm:w-48 sm:h-48 mb-4 border-4 border-blue-600"
+              />
             <h2 className="text-xl sm:text-2xl font-bold mb-2 text-center text-blue-600">
               {userdata.username}
             </h2>

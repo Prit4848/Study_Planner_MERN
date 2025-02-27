@@ -18,8 +18,9 @@ module.exports.postcreatePlans = async (req, res)=> {
       }
     try {
         const { title, description, date, tasks } = req.body;
+        const userId = req.user;
         const Attachment = req.file; 
-        const plan = await planServices.createPlan({title,description,date,tasks,Attachment})
+        const plan = await planServices.createPlan({title,description,date,tasks,Attachment,userId})
         return res.status(200).json({plan})
     } catch (err) {
         console.error(err);
@@ -106,6 +107,19 @@ module.exports.attachment = async (req,res)=>{
         res.status(200).json({pdf:plan.Attachment.data.buffer,contentType:plan.Attachment.contentType})
     } catch (err) {
         console.error(err);
+        res.status(500).send('Internal server error');
+    }
+}
+
+module.exports.getallPlans = async (req,res)=>{
+    try {
+        const userId = req.user;
+
+        const plan = await planServices.getallplans({userId})
+
+        res.status(200).json({plan})
+    } catch (error) {
+        console.error(error);
         res.status(500).send('Internal server error');
     }
 }
