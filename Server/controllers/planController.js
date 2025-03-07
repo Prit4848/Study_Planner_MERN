@@ -66,8 +66,7 @@ module.exports.postTaskCompletion = async function(req,res){
 module.exports.postDelete = async function(req, res) {
     try {
          const planId =  req.params.planid;
-        
-        await planServices.DeletePlan({planId})
+        await planServices.DeletePlan(planId)
         res.status(200).json({message:"plan delete successfully"}); 
     } catch (err) {
         console.error(err);

@@ -94,7 +94,7 @@ module.exports.EditPlan = async({title,description,date,tasks,planId,userId})=>{
 }
 
 module.exports.CompleteTask = async ({planId,taskId})=>{
-       if(!planId || ! taskId){
+       if(!planId || !taskId){
          throw new Error('{planId,taskId} Fields are Required')
        }
        let plan = await planModel.findOne({_id:planId})
@@ -111,8 +111,8 @@ module.exports.CompleteTask = async ({planId,taskId})=>{
           return task;
 }
 
-module.exports.DeletePlan = async ({planId})=>{
-    if(planId){
+module.exports.DeletePlan = async (planId)=>{
+    if(!planId){
         throw new Error('All Fiels Are Required')
     }
     await planModel.deleteOne({ _id:planId });

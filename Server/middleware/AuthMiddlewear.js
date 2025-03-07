@@ -7,6 +7,7 @@ module.exports.AuthUser = async function (req, res, next) {
     if (!token) {
         return res.status(401).json({ Message: "User Not Authenticated" });
     }
+    
     try {
         
         const decoded = jwt.verify(token, process.env.JWT_SECRET);

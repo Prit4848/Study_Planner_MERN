@@ -1,9 +1,11 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
+import axios from 'axios'
 
 const ViewPlan = () => {
   const location = useLocation();
   const plan = location.state?.plan;
+  
 
   if (!plan) {
     return (
@@ -14,10 +16,34 @@ const ViewPlan = () => {
   }
 
   // Function to handle task completion (You can connect this to backend)
-  const handleCompleteTask = (taskId) => {
-    console.log(`Task ${taskId} marked as completed.`);
-    // Here, you can send a request to update the task's completed status in your database.
+  const handleCompleteTask = async (taskId) => {
+    try {
+      console.log(`Task ${taskId} marked as completed.`);
+      
+      const token = localStorage.getItem("token");
+  
+      if (!token) {
+        console.error("No token found");
+        return;
+      }
+  
+      const response = await axios.post(
+        `${import.meta.env.VITE_BASE_URL}/plan/${plan._id}/${taskId}/toggle`,
+        {}, // Empty body as it's a toggle request
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+  
+      if (response.status === 200 || response.status === 201) {
+        console.log(response.data);
+        // Optionally, update the UI by refreshing the state
+      }
+    } catch (error) {
+      console.error("Error marking task as completed:", error.response?.data || error.message);
+    }
   };
+  
 
   const getAttachmentSrc = () => {
     if (plan.Attachment && plan.Attachment.data && plan.Attachment.data.data) {

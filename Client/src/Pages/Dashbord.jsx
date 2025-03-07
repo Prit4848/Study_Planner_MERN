@@ -1,9 +1,11 @@
 import React, { useContext, useState } from 'react';
 import Header from '../Componets/Header';
 import Footer from '../Componets/Footer';
+import { ToastContainer, toast } from 'react-toastify';
 import { Context } from '../Context/UserContext';
 import { PContext } from '../Context/planContext';
 import { Link } from 'react-router-dom';
+import axios from 'axios';
 
 const Dashboard = () => {
   const [isLoggedIn, setisLoggedIn] = useState(true);
@@ -11,8 +13,30 @@ const Dashboard = () => {
   const { plan } = useContext(PContext);
   const [user] = useState(userdata);
 
+  const DeletePlanHanndler = async (planid)=>{
+    const token = localStorage.getItem("token");
+  
+    if (!token) {
+      console.error("No token found");
+      return;
+    }
+    try {
+      const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/plan//delete/${planid}`,{}, 
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+
+        if(response.status == 200 || response.status == 201){
+          toast.success("plan delete sucessfully")
+        }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   return (
     <>
+     <ToastContainer />
       <Header user={user} isLoggedIn={isLoggedIn} setisLoggedIn={setisLoggedIn} />
       <div className="container mx-auto p-4 mt-10 flex flex-col gap-6">
 
@@ -76,7 +100,7 @@ const Dashboard = () => {
                           <button className="bg-yellow-500 text-white px-4 py-2 rounded-md hover:bg-yellow-600">
                             Edit
                           </button>
-                          <button className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
+                          <button onClick={()=>{DeletePlanHanndler(plan._id)}} className="bg-red-500 text-white px-4 py-2 rounded-md hover:bg-red-600">
                             Delete
                           </button>
                         </span>
