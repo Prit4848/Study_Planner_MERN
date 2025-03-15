@@ -31,7 +31,6 @@ const PlanContext = ({ children }) => {
             fetchAllPlans();
         }
     }, [token]);
-  console.log(plan)
     return (
         <PContext.Provider value={{ plan, setplan }}>
             {children}

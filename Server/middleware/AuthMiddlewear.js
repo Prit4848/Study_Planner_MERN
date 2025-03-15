@@ -3,7 +3,7 @@ const userModel = require('../models/user-model');
 
 module.exports.AuthUser = async function (req, res, next) {
     const token = req.cookies.token || req.headers.authorization?.split(' ')[1];
-    
+    console.log(token)
     if (!token) {
         return res.status(401).json({ Message: "User Not Authenticated" });
     }

@@ -20,6 +20,11 @@ import WhyUs from './Pages/WhyUs'
 import AboutUs from './Pages/AboutUs'
 import Features from './Pages/Features'
 import ViewPlan from './Pages/ViewPlan'
+import EditPlan from './Pages/EditPlan'
+import CreateGoal from './Pages/CreateGoal'
+import ViewGoal from './Pages/ViewGoal'
+import EditGoal from './Pages/EditGoal'
+
 
 
 const App = () => {
@@ -40,8 +45,13 @@ const App = () => {
         <Route path='/User/Profile' element={<UserProtectedWrapper><Profile/></UserProtectedWrapper>}/>
         <Route path='/User/Settings' element={<UserProtectedWrapper><Settings/></UserProtectedWrapper>}/>
         //Plane Routes
-        <Route path='/Create/Plan' element={<CreateStudyPlan/>} />
+        <Route path='/Plan/Create' element={<CreateStudyPlan/>} />
         <Route path='/Plan/View' element={<ViewPlan/>} />
+        <Route path='/Plan/Edit' element={<EditPlan/>}/>
+        //Goal Router
+        <Route path='/Goal/Create' element={<CreateGoal/>} />
+        <Route path='/Goal/View' element={<ViewGoal/>} />
+        <Route path='/Goal/Edit' element={<EditGoal/>} />
         //footer Routes
         <Route path='/Support' element={<Support/>} />
         <Route path='/WhyUs' element={<WhyUs/>} />

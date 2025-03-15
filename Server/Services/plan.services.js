@@ -74,6 +74,14 @@ module.exports.EditPlan = async({title,description,date,tasks,planId,userId})=>{
    if(!title || !description ||  !date || !tasks || !planId || !userId){
      throw new Error('All Fiels Are Required')
    }
+  
+   if (typeof tasks === 'string') {
+    try {
+        tasks = JSON.parse(tasks); // Convert string to array
+    } catch (error) {
+        throw new Error('Invalid task data format');
+    }
+   }
 
     if (!tasks || !Array.isArray(tasks)) {
     throw new Error('Task Should Be Array')

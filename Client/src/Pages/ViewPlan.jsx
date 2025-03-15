@@ -37,7 +37,6 @@ const ViewPlan = () => {
   
       if (response.status === 200 || response.status === 201) {
         console.log(response.data);
-        // Optionally, update the UI by refreshing the state
       }
     } catch (error) {
       console.error("Error marking task as completed:", error.response?.data || error.message);

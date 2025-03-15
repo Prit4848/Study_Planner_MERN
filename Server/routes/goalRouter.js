@@ -10,16 +10,8 @@ router.post(
   AuthMiddlewear.AuthUser,
   goalController.createGoal
 );
-router.get(
-  "/:goalid/:userid/view",
-  AuthMiddlewear.AuthUser,
-  goalController.editGoal
-);
-router.get(
-  "/:goalid/:userid/edit",
-  AuthMiddlewear.AuthUser,
-  goalController.editGoal
-);
+
+
 router.post(
   "/:goalid/:userid/edit",
    GoalMiddlewear.EditGoalValidator,
@@ -32,8 +24,13 @@ router.post(
   goalController.deleteGoal
 );
 router.post(
-  "/complete/goalid",
+  "/complete/:goalId",
   AuthMiddlewear.AuthUser,
   goalController.completionGoal
 );
+
+router.get("/allGoals",
+  AuthMiddlewear.AuthUser,
+  goalController.AllGoals
+)
 module.exports = router;

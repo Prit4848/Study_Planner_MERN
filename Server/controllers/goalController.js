@@ -23,21 +23,6 @@ module.exports.createGoal = async function (req, res) {
   }
 };
 
-module.exports.viewGoal = async function(req,res){
-  try{
-    const goalId = req.params.goalid;
-    const userId = req.params.userid
-    
-    const goal = await goalServices.viewgoal({userId,goalId})
-
-    res.status(200).json({goal:goal})
-  }catch(err){
-    console.log(err);
-  }
-}
-
-
-
 module.exports.postEditGoal = async function(req,res){
   const error = validationResult(req)
   if(!error.isEmpty()){
@@ -71,10 +56,22 @@ module.exports.completionGoal = async function(req,res){
   try{
       const goalId = req.params.goalId;
       
-      await goalServices.completegoal({goalId})
+      const goal = await goalServices.completegoal({goalId})
 
-      res.status(200).json({completed:goal.completed})
+      res.status(200).json({goal})
   }catch(err){
     console.log(err);
+  }
+}
+
+module.exports.AllGoals = async (req,res)=>{
+  try {
+    const userId = req.user._id;
+
+    const goals = await goalServices.AllGoals({userId})
+
+    res.status(200).json({goals})
+  } catch (error) {
+    console.log(error)
   }
 }

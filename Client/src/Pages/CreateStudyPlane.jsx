@@ -75,7 +75,7 @@ const CreateStudyPlan = () => {
       }
        
       const objectData = Object.fromEntries(formData.entries());
-console.log(objectData);
+
       const response = await axios.post(
         `${import.meta.env.VITE_BASE_URL}/plan/create`,
         objectData,
@@ -89,7 +89,10 @@ console.log(objectData);
 
       if (response.status === 200 || response.status === 201) {
         toast.success("Study Plan Created Successfully!");
-        navigate("/Plan/View");
+        navigate("/Dashboard");
+        setTimeout(() => {
+          window.location.reload(); 
+        }, 1000);
       } else {
         toast.error("Something is wrong. Please check input fields ❌");
       }

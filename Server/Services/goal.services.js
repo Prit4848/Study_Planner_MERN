@@ -18,11 +18,6 @@ module.exports.creategoal =async ({ goalTitle, goalDescription, dueDate, priorit
   return goal;
 }
 
-module.exports.viewgoal = async ({userId,goalId})=>{
-    const goal = await goalModel.findOne({_id:goalId,userId:userId})
-
-    return goal;
-}
 
 module.exports.editgoal = async ({goalTitle, goalDescription, dueDate, priority,userId,goalId})=>{
     if(!goalTitle ||  !goalDescription || !dueDate ||  !priority || !userId || !goalId){
@@ -51,5 +46,15 @@ module.exports.completegoal = async ({goalId}) => {
         
     await goal.save()
 
-    return 
+    return goal
+}
+
+module.exports.AllGoals =async ({userId})=>{
+    if(!userId){
+        throw new Error("userId is Required")
+    }
+
+    const goal = await goalModel.find({userId:userId})
+
+    return goal
 }
