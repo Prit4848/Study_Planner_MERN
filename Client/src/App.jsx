@@ -24,6 +24,8 @@ import EditPlan from './Pages/EditPlan'
 import CreateGoal from './Pages/CreateGoal'
 import ViewGoal from './Pages/ViewGoal'
 import EditGoal from './Pages/EditGoal'
+import Visualization from './Pages/Visualization'
+import HowToUse from './Pages/HowToUse'
 
 
 
@@ -44,6 +46,8 @@ const App = () => {
         <Route path='/ContactUs' element={<ContactUs/>} />
         <Route path='/User/Profile' element={<UserProtectedWrapper><Profile/></UserProtectedWrapper>}/>
         <Route path='/User/Settings' element={<UserProtectedWrapper><Settings/></UserProtectedWrapper>}/>
+        <Route path='/Visualization' element={<Visualization/>} />
+        <Route path='/HowToUse' element={<HowToUse/>} />
         //Plane Routes
         <Route path='/Plan/Create' element={<CreateStudyPlan/>} />
         <Route path='/Plan/View' element={<ViewPlan/>} />

@@ -87,13 +87,13 @@ const Header = ({ user, isLoggedIn,setisLoggedIn }) => {
                     >
                       Your Profile
                     </Link>
-                    <a
-                      href="/planTracker"
+                    <Link
+                      to={'/Visualization'}
                       className="block px-4 py-2 text-sm text-gray-700"
                       role="menuitem"
                     >
                       Visualization
-                    </a>
+                    </Link>
                     <Link
                       to={'/User/Settings'}
                       className="block px-4 py-2 text-sm text-gray-700"
@@ -102,9 +102,9 @@ const Header = ({ user, isLoggedIn,setisLoggedIn }) => {
                       Settings
                     </Link>
                     <Link
+                    to={"/HowToUse"}
                       className="block px-4 py-2 text-sm text-gray-700"
                       role="menuitem"
-                      onClick={()=>{setisLoggedIn(flase)}}
                     >
                       How To Use
                     </Link>
