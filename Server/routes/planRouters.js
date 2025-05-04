@@ -36,7 +36,6 @@ router.post(
 router.post(
   "/:planId/set-reminder",
   AuthMiddleware.AuthUser,
-  PlanMiddlewear.SetRemiderValidator,
   planController.setReminder
 );
 

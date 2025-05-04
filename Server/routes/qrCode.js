@@ -6,7 +6,6 @@ const { getQRCodeImage } = require('../middleware/whatsapp'); // Adjust the path
 router.get('/qr-code', async (req, res) => {
     try {
         const qrCodeImage = await getQRCodeImage();
-        console.log(qrCodeImage);
         if (qrCodeImage) {
             res.json({ qrCodeImage });
         } else {

@@ -22,4 +22,13 @@ module.exports.EditPlanValidator = [
       .withMessage("it is not Date"),
   ]
 
-module.exports.SetRemiderValidator = [body("reminderdate").isDate().withMessage("not valid formate")]
+module.exports.SetReminderValidator = [
+    body("reminderdate")
+      .custom((value) => {
+        const date = new Date(value);
+        if (isNaN(date.getTime())) {
+          throw new Error("Invalid date and time format");
+        }
+        return true;
+      })
+  ];

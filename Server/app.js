@@ -12,7 +12,7 @@ const userRoutes = require("./routes/userRouters")
 const planRoutes = require("./routes/planRouters")
 const goalRouter = require("./routes/goalRouter")
 // const indexRouter = require("./routes/indexRouter")
-// const qrCodeRoute = require("./routes/qrCode")
+const qrCodeRoute = require("./routes/qrCode")
 
 
 require('dotenv').config();
@@ -24,12 +24,12 @@ app.set('view engine', 'ejs')
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cors())
-app.use(morgan('short'))
+app.use(morgan('dev'))
 
 
 app.use('/user', userRoutes);
 app.use('/plan', planRoutes);
 app.use('/goal', goalRouter);
-// app.use('/api', qrCodeRoute);
+app.use('/api', qrCodeRoute);
 
 module.exports = app;

@@ -86,7 +86,7 @@ module.exports.setReminder = async function(req, res) {
         const phone_no = req.user.phone_no;
         const userId = req.user._id;
         const planId = req.params.planId;
-        
+        console.log(req.user)
         await planServices.setreminder({reminderDate,phone_no,userId,planId})
 
         res.status(200).json({message:"set reminder successfully"})

@@ -32,7 +32,6 @@ router.post(
   userController.uploadProfileImage
 );
 
-// Update Account Route
 router.post(
   "/account/update",
   middleware.AuthUser,
@@ -40,7 +39,6 @@ router.post(
   userController.AccountUpdate
 );
 
-// Contact Us Route
 router.post(
   "/contactUs",
   UserMiddlewear.ContactUsValidator,

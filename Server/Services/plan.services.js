@@ -77,7 +77,7 @@ module.exports.EditPlan = async({title,description,date,tasks,planId,userId})=>{
   
    if (typeof tasks === 'string') {
     try {
-        tasks = JSON.parse(tasks); // Convert string to array
+        tasks = JSON.parse(tasks); 
     } catch (error) {
         throw new Error('Invalid task data format');
     }

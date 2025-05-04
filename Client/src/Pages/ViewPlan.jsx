@@ -1,11 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
+import { ToastContainer, toast } from 'react-toastify';
 import axios from 'axios'
 
 const ViewPlan = () => {
   const location = useLocation();
   const plan = location.state?.plan;
-  
+  const [QRImage, setQRImage] = useState('')
+  const [ReminderDAte, setReminderDAte] = useState('')
+  const token = localStorage.getItem("token")
 
   if (!plan) {
     return (
@@ -20,7 +23,7 @@ const ViewPlan = () => {
     try {
       console.log(`Task ${taskId} marked as completed.`);
       
-      const token = localStorage.getItem("token");
+      
   
       if (!token) {
         console.error("No token found");
@@ -55,8 +58,66 @@ const ViewPlan = () => {
     }
     return null; // Return null if no valid attachment is available
   };
+
+  const getQRCode = async () =>{
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_BASE_URL}/api/qr-code`);
+      if(response.status == 200 || response.status == 201){
+        const data =  response.data
+        setQRImage(data.qrCodeImage)
+      }else{
+        toast.error("Try Again")
+      }
+    } catch (error) {
+      console.log(error.message)
+      toast.error(`${error.message}`)
+    }
+  }
+
+  const setReminder = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        console.error("No token found");
+        toast.error("User not authenticated.");
+        return;
+      }
+  
+      if (!ReminderDAte) {
+        toast.error("Reminder date is required.");
+        return;
+      }
+
+      console.log(ReminderDAte);
+      
+  
+      const url = `${import.meta.env.VITE_BASE_URL}/plan/${plan._id}/set-reminder`;
+      const formattedDate = new Date(ReminderDAte).toISOString();
+      const data = { reminderDate: formattedDate };
+  
+      const response = await axios.post(url, data, {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+  
+      if (response.status === 200 || response.status === 201) {
+        toast.success(`Reminder set for ${new Date(ReminderDAte).toLocaleString()}`);
+      } else {
+        toast.error("Something went wrong");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      toast.error(error.response?.data?.message || error.message);
+    }
+  };
+  
   return (
     <div className="container mx-auto p-4">
+      <ToastContainer />
       <div className="flex flex-col md:flex-row justify-between">
         {/* Left Section */}
         <div className="md:w-2/3 bg-white p-6 rounded-lg shadow-md mb-4 md:mb-0 md:mr-4">
@@ -135,9 +196,11 @@ const ViewPlan = () => {
         {/* Right Section */}
         <div className="md:w-1/3 bg-white p-6 rounded-lg shadow-md">
           <h3 className="text-2xl font-semibold mb-4">Set Reminder</h3>
-          <form>
+          <form onSubmit={(e)=>{setReminder(e)}}>
             <label className="block text-gray-700">Select Date and Time:</label>
             <input
+            value={ReminderDAte}
+            onChange={(e)=>{setReminderDAte(e.target.value)}}
               type="datetime-local"
               className="border p-2 rounded-md w-full mt-2"
             />
@@ -154,13 +217,13 @@ const ViewPlan = () => {
             <h3 className="text-2xl font-semibold mb-4">WhatsApp QR Code</h3>
             <div className="border p-2 rounded-md w-full mt-2">
               <img
-                src="https://via.placeholder.com/150"
+                src={`${QRImage}`}
                 alt="QR Code"
                 className="w-full"
               />
             </div>
-            <button className="bg-yellow-500 text-white px-4 py-2 rounded-md mt-4 hover:bg-yellow-600 transition duration-300 ease-in-out w-full">
-              Refresh QR Code
+            <button onClick={()=>{getQRCode()}} className="bg-yellow-500 text-white px-4 py-2 rounded-md mt-4 hover:bg-yellow-600 transition duration-300 ease-in-out w-full">
+              Get QR Code
             </button>
           </div>
         </div>
