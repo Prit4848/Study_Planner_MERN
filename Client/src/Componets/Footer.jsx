@@ -39,53 +39,63 @@ const Footer = () => {
   }, []);
 
   return (
-    <div className="w-full min-h-screen flex items-center justify-center bg-blue-500 p-4">
-      <div className="md:w-2/3 w-full text-white flex flex-col animate-fade-in">
-        <div className="w-full text-4xl md:text-6xl font-bold animate-slide-in-left">
-          <h1 className="w-full md:w-2/3 text-center md:text-left">
-            How can we help you? Get in touch
-          </h1>
-        </div>
-        <div className="flex flex-col mt-4 md:flex-row md:justify-between">
-          <p className="w-full md:w-2/3 text-gray-300 text-center md:text-left animate-slide-in-right">
-            Any query? Contact us and ask. We will reach a solution as soon as possible.
-          </p>
-          <div className="w-full md:w-44 pt-6 md:pt-0 animate-bounce flex justify-center md:justify-end">
+    <footer className="w-full bg-blue-500 py-12 px-4 mt-auto">
+      <div className="max-w-6xl mx-auto text-white">
+        {/* Main CTA Section */}
+        <div className="flex flex-col lg:flex-row items-center justify-between mb-8">
+          <div className="flex-1 mb-6 lg:mb-0">
+            <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-center lg:text-left animate-slide-in-left">
+              How can we help you? Get in touch
+            </h2>
+            <p className="text-gray-300 text-center lg:text-left animate-slide-in-right">
+              Any query? Contact us and ask. We will reach a solution as soon as possible.
+            </p>
+          </div>
+          <div className="animate-bounce">
             <Link
-              to={'/ContactUs'}
-              className="bg-red-500 text-center rounded-lg shadow px-10 py-3 flex items-center justify-center hover:animate-pulse"
+              to="/ContactUs"
+              className="bg-red-500 text-center rounded-lg shadow px-8 py-3 inline-block hover:animate-pulse transition-all duration-300 hover:bg-red-600"
             >
               Contact Us
             </Link>
           </div>
         </div>
-        <div className="flex flex-col md:flex-row gap-6 md:gap-28 mt-8 mb-8 justify-center md:justify-start animate-fade-in">
+
+        {/* Navigation Links */}
+        <div className="flex flex-wrap justify-center lg:justify-start gap-8 mb-8 animate-fade-in">
           {[
-            { to:'/AboutUs', label: "About" },
-            { to:'/Features', label: "Features" },
-            { to:'/WhyUs', label: "Why Us" },
-            { to:'/Support', label: "Support" },
+            { to: "/AboutUs", label: "About" },
+            { to: "/Features", label: "Features" },
+            { to: "/WhyUs", label: "Why Us" },
+            { to: "/Support", label: "Support" },
           ].map((link, index) => (
             <Link
               key={index}
               to={link.to}
-              className="cursor-pointer text-gray-300 hover:text-white uppercase hover:animate-pulse text-center"
+              className="text-gray-300 hover:text-white uppercase hover:animate-pulse transition-colors duration-300"
             >
               {link.label}
             </Link>
           ))}
         </div>
-        <hr className="border-gray-600 my-4 w-full" />
-        <div className="flex flex-col md:flex-row items-center justify-between w-full space-y-4 md:space-y-0">
-          <div className="flex justify-center md:justify-start space-x-8">
-            {/* Social media icons can be added here */}
+
+        {/* Divider */}
+        <hr className="border-gray-600 mb-6" />
+
+        {/* Footer Bottom */}
+        <div className="flex flex-col md:flex-row items-center justify-between space-y-4 md:space-y-0">
+          <div className="flex space-x-6">
+            {/* Social media icons placeholder */}
+            <div className="text-gray-400 text-sm">
+              Follow us on social media
+            </div>
           </div>
-          <p className="w-full text-center text-xs md:text-base text-gray-300 animate-slide-in-up">
+          <p className="text-gray-300 text-sm animate-slide-in-up">
             Copyright © 2024 prit415
           </p>
         </div>
       </div>
-    </div>
+    </footer>
   );
 };
 

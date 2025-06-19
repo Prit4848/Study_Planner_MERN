@@ -9,6 +9,7 @@ const Register = () => {
   const [phoneno, setphoneno] = useState()
   const [email, setemail] = useState('')
   const [password, setpassword] = useState('')
+  const [ConformPassword, setConformPassword] = useState('')
   const navigate = useNavigate()
   
   const RegisterHandller = async (e)=>{
@@ -16,6 +17,15 @@ const Register = () => {
     try {
       if(!username || !phoneno || !email || !password){
         return  toast.error("All Fields Are require!!")
+      }
+
+       if (password !== ConformPassword) {
+        toast.error('Password and Confirm Password do not match ❌');
+        return;
+      }
+      if (password.length < 6) {
+        toast.error('Password must be 6 or more characters ❌');
+        return;
       }
 
       const userData = {
@@ -94,6 +104,19 @@ const Register = () => {
           }}
             type="password"
             id="password"
+            className="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+            required
+          />
+        </div>
+        <div className="mb-4">
+          <label htmlFor="ConformPassword" className="block text-gray-700">ConformPassword</label>
+          <input
+          value={ConformPassword}
+          onChange={(e)=>{
+            setConformPassword(e.target.value)
+          }}
+            type="ConformPassword"
+            id="ConformPassword"
             className="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
             required
           />

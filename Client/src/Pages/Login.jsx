@@ -48,57 +48,59 @@ const Login = () => {
     <>
       <Header />
       <ToastContainer />
-      <div className="p-4 mt-20 mb-20">
-        <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
-        <form
-          onSubmit={(e) => {
-            LoginHandller(e);
-          }}
-          className="max-w-md mx-auto bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4"
-        >
-          <div className="mb-4">
-            <label htmlFor="email" className="block text-gray-700">
-              Email
-            </label>
-            <input
-              value={email}
-              onChange={(e) => {
-                setemail(e.target.value);
-              }}
-              type="email"
-              id="email"
-              className="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-            />
-          </div>
-          <div className="mb-4">
-            <label htmlFor="password" className="block text-gray-700">
-              Password
-            </label>
-            <input
-              value={password}
-              onChange={(e) => {
-                setpassword(e.target.value);
-              }}
-              type="password"
-              id="password"
-              className="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
-            />
-          </div>
-          <div className="flex justify-between">
-            <button
-              type="submit"
-              className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600 transition duration-300"
-            >
-              Login
-            </button>
-            <Link
-              to={"/ForgotePassword"}
-              className="text-blue-600 hover:underline"
-            >
-              Forgot Password..
-            </Link>
-          </div>
-        </form>
+      <div className="container mx-auto max-w-5xl px-4">
+        <div className="p-4 mt-20 mb-20">
+          <h2 className="text-2xl font-bold mb-4 text-center">Login</h2>
+          <form
+            onSubmit={(e) => {
+              LoginHandller(e);
+            }}
+            className="max-w-md mx-auto bg-white shadow-md rounded-lg px-8 pt-6 pb-8 mb-4"
+          >
+            <div className="mb-4">
+              <label htmlFor="email" className="block text-gray-700">
+                Email
+              </label>
+              <input
+                value={email}
+                onChange={(e) => {
+                  setemail(e.target.value);
+                }}
+                type="email"
+                id="email"
+                className="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+              />
+            </div>
+            <div className="mb-4">
+              <label htmlFor="password" className="block text-gray-700">
+                Password
+              </label>
+              <input
+                value={password}
+                onChange={(e) => {
+                  setpassword(e.target.value);
+                }}
+                type="password"
+                id="password"
+                className="block w-full py-2 px-3 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:border-blue-500 focus:ring focus:ring-blue-500 focus:ring-opacity-50"
+              />
+            </div>
+            <div className="flex justify-between">
+              <button
+                type="submit"
+                className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600 focus:outline-none focus:bg-blue-600 transition duration-300"
+              >
+                Login
+              </button>
+              <Link
+                to={"/ForgotePassword"}
+                className="text-blue-600 hover:underline"
+              >
+                Forgot Password..
+              </Link>
+            </div>
+          </form>
+        </div>
       </div>
     </>
   );

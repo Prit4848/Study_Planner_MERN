@@ -1,13 +1,24 @@
-import React from "react";
+import React, { useContext, useState } from 'react';
+import { Context } from '../Context/UserContext';
+import { PContext } from '../Context/planContext';
+import { Goalcontext } from '../Context/GoalContext';
 import profileImage from "../assets/organized_1.jpeg";
 import alert_1 from "../assets/alert_1.jpeg";
 import goals from "../assets/goals_1.jpeg";
 import track from "../assets/track_1.jpeg";
+import Header from '../Componets/Header';
 
 const HowToUse = () => {
+  const [isLoggedIn, setisLoggedIn] = useState(true)
+    const {userdata} = useContext(Context)
+    const {plan} = useContext(PContext)
+    const {goal} = useContext(Goalcontext)
+
+    const [user, setuser] = useState(userdata) 
   return (
     <>
       {/* Header */}
+      <Header user={user} isLoggedIn={isLoggedIn} setisLoggedIn={setisLoggedIn}/>
       <div className="container mx-auto p-4 text-center mt-8 reveal">
         <h1 className="text-3xl sm:text-4xl font-bold text-black animate-typing">
           Welcome to Study Planner
@@ -27,28 +38,28 @@ const HowToUse = () => {
             {
               img: profileImage,
               alt: "Organize Your Schedule",
-              link: "/h-organize-schedule",
+              link: "/OrganizeSchedule",
               title: "Organize Your Schedule",
               description: "Easily organize and manage your study schedule.",
             },
             {
               img: track,
               alt: "Track Your Progress",
-              link: "/h-tracking-progress",
+              link: "/TrackProgress",
               title: "Track Your Progress",
               description: "Monitor your progress and stay motivated.",
             },
             {
               img: goals,
               alt: "Organize Your Goals",
-              link: "/h-organize-goal",
+              link: "/OrganizeGoals",
               title: "Organize Your Goals",
               description: "Set and organize your study goals effectively.",
             },
             {
               img: alert_1,
               alt: "Personalize Alerts",
-              link: "/h-personalize-alert",
+              link: "/PersonalizedAlerts",
               title: "Personalize Alerts",
               description: "Set personalized alerts to never miss a study session.",
             },

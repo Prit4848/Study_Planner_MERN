@@ -26,6 +26,10 @@ import ViewGoal from './Pages/ViewGoal'
 import EditGoal from './Pages/EditGoal'
 import Visualization from './Pages/Visualization'
 import HowToUse from './Pages/HowToUse'
+import OrganizeSchedule from './Pages/H_OrganizedSchedule'
+import TrackProgress from './Pages/H_TrackProgress'
+import OrganizeGoals from './Pages/H_OrganizedGoal'
+import PersonalizedAlerts from './Pages/H_PersonalizeAlert'
 
 
 
@@ -61,6 +65,12 @@ const App = () => {
         <Route path='/WhyUs' element={<WhyUs/>} />
         <Route path='/AboutUs' element={<AboutUs/>} />
         <Route path='/Features' element={<Features/>} />
+
+        //How To Use
+        <Route path='/OrganizeSchedule' element={<OrganizeSchedule/>} />
+        <Route path='/TrackProgress' element={<TrackProgress/>} />
+        <Route path='/OrganizeGoals' element={<OrganizeGoals/>} />
+        <Route path='/PersonalizedAlerts' element={<PersonalizedAlerts/>} />
       </Routes>
     </div>
   )

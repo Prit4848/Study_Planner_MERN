@@ -1,20 +1,47 @@
 import { useState, useEffect, useRef, useContext } from "react";
-import { Chart, LineController, LineElement, PointElement, LinearScale, Title, CategoryScale, Tooltip, PieController, ArcElement } from "chart.js";
+import {
+  Chart,
+  LineController,
+  LineElement,
+  PointElement,
+  LinearScale,
+  Title,
+  CategoryScale,
+  Tooltip,
+  PieController,
+  ArcElement,
+} from "chart.js";
 import "tailwindcss/tailwind.css";
+import { Context } from "../Context/UserContext";
 import { PContext } from "../Context/planContext";
+import { Goalcontext } from "../Context/GoalContext";
+import Header from "../Componets/Header";
 
-Chart.register(LineController, LineElement, PointElement, LinearScale, CategoryScale, Tooltip, PieController, ArcElement, Title);
+Chart.register(
+  LineController,
+  LineElement,
+  PointElement,
+  LinearScale,
+  CategoryScale,
+  Tooltip,
+  PieController,
+  ArcElement,
+  Title
+);
 
 // Add this new component just before the main Visualization component
 const ContributionChart = ({ plans }) => {
   const createContributionData = () => {
     const contributionData = {};
-    plans.forEach(plan => {
+    plans.forEach((plan) => {
       const planDate = new Date(plan.date);
       if (planDate.getFullYear() === new Date().getFullYear()) {
         const dateString = planDate.toDateString();
-        const completedTasks = plan.tasks.filter(task => task.completed).length;
-        contributionData[dateString] = (contributionData[dateString] || 0) + completedTasks;
+        const completedTasks = plan.tasks.filter(
+          (task) => task.completed
+        ).length;
+        contributionData[dateString] =
+          (contributionData[dateString] || 0) + completedTasks;
       }
     });
     return contributionData;
@@ -31,10 +58,10 @@ const ContributionChart = ({ plans }) => {
     });
 
     const getColor = (completed) => {
-      if (completed >= 7) return '#196127';
-      if (completed >= 5) return '#239a3b';
-      if (completed >= 1) return '#7bc96f';
-      return '#ebedf0';
+      if (completed >= 7) return "#196127";
+      if (completed >= 5) return "#239a3b";
+      if (completed >= 1) return "#7bc96f";
+      return "#ebedf0";
     };
 
     return (
@@ -50,10 +77,10 @@ const ContributionChart = ({ plans }) => {
                 key={index}
                 className="rounded-sm transition-all hover:scale-105 hover:shadow-md"
                 style={{
-                  width: '12px',
-                  height: '12px',
+                  width: "12px",
+                  height: "12px",
                   backgroundColor: getColor(completed),
-                  margin: '1px',
+                  margin: "1px",
                 }}
                 title={`${date.toLocaleDateString()}: ${completed} tasks completed`}
               />
@@ -62,19 +89,31 @@ const ContributionChart = ({ plans }) => {
         </div>
         <div className="mt-6 flex justify-center gap-4 text-sm text-gray-600">
           <div>
-            <span className="inline-block w-4 h-4 rounded-sm mr-2" style={{ backgroundColor: '#196127' }}></span>
+            <span
+              className="inline-block w-4 h-4 rounded-sm mr-2"
+              style={{ backgroundColor: "#196127" }}
+            ></span>
             7+ tasks
           </div>
           <div>
-            <span className="inline-block w-4 h-4 rounded-sm mr-2" style={{ backgroundColor: '#239a3b' }}></span>
+            <span
+              className="inline-block w-4 h-4 rounded-sm mr-2"
+              style={{ backgroundColor: "#239a3b" }}
+            ></span>
             5-6 tasks
           </div>
           <div>
-            <span className="inline-block w-4 h-4 rounded-sm mr-2" style={{ backgroundColor: '#7bc96f' }}></span>
+            <span
+              className="inline-block w-4 h-4 rounded-sm mr-2"
+              style={{ backgroundColor: "#7bc96f" }}
+            ></span>
             1-4 tasks
           </div>
           <div>
-            <span className="inline-block w-4 h-4 rounded-sm mr-2" style={{ backgroundColor: '#ebedf0' }}></span>
+            <span
+              className="inline-block w-4 h-4 rounded-sm mr-2"
+              style={{ backgroundColor: "#ebedf0" }}
+            ></span>
             0 tasks
           </div>
         </div>
@@ -90,7 +129,12 @@ const ContributionChart = ({ plans }) => {
 };
 
 const Visualization = () => {
-  const { plan } = useContext(PContext); // Accessing plans from Context
+  const [isLoggedIn, setisLoggedIn] = useState(true);
+  const { userdata } = useContext(Context);
+  const { plan } = useContext(PContext);
+  const { goal } = useContext(Goalcontext);
+
+  const [user, setuser] = useState(userdata);
   const [filteredPlans, setFilteredPlans] = useState(plan);
   const [timeframe, setTimeframe] = useState("all");
   const now = new Date();
@@ -100,7 +144,7 @@ const Visualization = () => {
 
   useEffect(() => {
     filterPlans(timeframe);
-  }, [timeframe, plan]); 
+  }, [timeframe, plan]);
 
   useEffect(() => {
     updateCharts(filteredPlans);
@@ -188,48 +232,57 @@ const Visualization = () => {
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
-        Visualization
-      </h1>
-      
-      {/* Filter Controls */}
-      <div className="mb-6 flex items-center">
-        <label className="mr-3 text-lg font-semibold text-gray-700">
-          Filter by:
-        </label>
-        <select
-          onChange={(e) => setTimeframe(e.target.value)}
-          className="border border-gray-400 p-3 rounded-lg shadow-md text-gray-800 focus:outline-none"
-        >
-          <option value="all">All Time</option>
-          <option value="week">One Week</option>
-          <option value="month">One Month</option>
-          <option value="year">One Year</option>
-        </select>
+    <>
+      <Header user={user} isLoggedIn={isLoggedIn} setisLoggedIn={setisLoggedIn}/>
+      <div className="container mx-auto p-6">
+        <h1 className="text-3xl font-bold text-gray-800 mb-6 text-center">
+          Visualization
+        </h1>
+
+        {/* Filter Controls */}
+        <div className="mb-6 flex items-center">
+          <label className="mr-3 text-lg font-semibold text-gray-700">
+            Filter by:
+          </label>
+          <select
+            onChange={(e) => setTimeframe(e.target.value)}
+            className="border border-gray-400 p-3 rounded-lg shadow-md text-gray-800 focus:outline-none"
+          >
+            <option value="all">All Time</option>
+            <option value="week">One Week</option>
+            <option value="month">One Month</option>
+            <option value="year">One Year</option>
+          </select>
+        </div>
+
+        {/* Grid Layout for Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Line Chart */}
+          <div className="bg-white p-6 rounded-xl shadow-lg lg:col-span-2">
+            <h2 className="text-xl font-semibold mb-4 text-gray-700">
+              Task Completion Timeline
+            </h2>
+            <canvas id="planChart" className="w-full h-80"></canvas>
+          </div>
+
+          {/* Pie Chart */}
+          <div className="bg-white p-6 rounded-xl shadow-lg">
+            <h2 className="text-xl font-semibold mb-4 text-gray-700">
+              Overall Completion
+            </h2>
+            <canvas id="completionPieChart" className="w-full h-80"></canvas>
+          </div>
+
+          {/* Contribution Chart */}
+          <div className="bg-white p-6 rounded-xl shadow-lg">
+            <h2 className="text-xl font-semibold mb-4 text-gray-700">
+              Yearly Contributions
+            </h2>
+            <ContributionChart plans={filteredPlans} />
+          </div>
+        </div>
       </div>
-
-      {/* Grid Layout for Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Line Chart */}
-        <div className="bg-white p-6 rounded-xl shadow-lg lg:col-span-2">
-          <h2 className="text-xl font-semibold mb-4 text-gray-700">Task Completion Timeline</h2>
-          <canvas id="planChart" className="w-full h-80"></canvas>
-        </div>
-
-        {/* Pie Chart */}
-        <div className="bg-white p-6 rounded-xl shadow-lg">
-          <h2 className="text-xl font-semibold mb-4 text-gray-700">Overall Completion</h2>
-          <canvas id="completionPieChart" className="w-full h-80"></canvas>
-        </div>
-
-        {/* Contribution Chart */}
-        <div className="bg-white p-6 rounded-xl shadow-lg">
-          <h2 className="text-xl font-semibold mb-4 text-gray-700">Yearly Contributions</h2>
-          <ContributionChart plans={filteredPlans} />
-        </div>
-      </div>
-    </div>
+    </>
   );
 };
 
