@@ -1,5 +1,6 @@
 const express = require("express")
 const app = express();
+require('dotenv').config();
 const cors = require('cors')
 const morgan = require('morgan')
 const cookieparser = require("cookie-parser")
@@ -11,7 +12,6 @@ const db = require("./config/mongoose-connection")
 const userRoutes = require("./routes/userRouters")
 const planRoutes = require("./routes/planRouters")
 const goalRouter = require("./routes/goalRouter")
-// const indexRouter = require("./routes/indexRouter")
 const qrCodeRoute = require("./routes/qrCode")
 
 
