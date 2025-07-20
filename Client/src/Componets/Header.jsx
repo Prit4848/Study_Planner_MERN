@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import Logo from "../assets/logo.png";
 import { Context } from "../Context/UserContext";
 import { useContext } from "react";
+import defaultProfileImage from "../assets/profile.png"
 
 const Header = ({ user, isLoggedIn, setisLoggedIn }) => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -19,7 +20,7 @@ const Header = ({ user, isLoggedIn, setisLoggedIn }) => {
         )
       )}`;
     }
-    return defaultProfileImage; // Use default image if no profile picture is available
+    return defaultProfileImage; 
   };
 
   const toggleMenu = () => setIsMenuOpen(!isMenuOpen);

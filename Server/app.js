@@ -26,6 +26,10 @@ app.use(express.json());
 app.use(cors())
 app.use(morgan('dev'))
 
+app.get("/",(req,res)=>{
+    res.send("backend server Started")
+})
+
 
 app.use('/user', userRoutes);
 app.use('/plan', planRoutes);
