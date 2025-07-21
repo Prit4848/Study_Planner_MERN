@@ -22,9 +22,13 @@ module.exports.CreateUser =async ({username,email,password,phone_no})=>{
     
     await user.save();
 
-    delete user._doc.password;
+    const createduser = await userModel.findById(user._id);
 
-    return user;
+     if(!createduser){
+      throw new Error("Created User Not Present")
+     }
+
+    return createduser;
 }
 
 module.exports.loginuser = async ({email,password})=>{
