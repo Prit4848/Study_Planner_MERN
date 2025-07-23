@@ -32,6 +32,17 @@ app.get("/",(req,res)=>{
     res.send("backend server Started")
 })
 
+// Global Error Handler
+app.use((err, req, res, next) => {
+  const statusCode = err.statusCode || 500;
+
+  res.status(statusCode).json({
+    success: false,
+    message: err.message || "Internal Server Error",
+    errors: err.errors || [],
+    data: null
+  });
+});
 
 app.use('/user', userRoutes);
 app.use('/plan', planRoutes);

@@ -1,34 +1,35 @@
 const userModel = require('../models/user-model')
 const nodemailer = require('nodemailer')
 const bcrypt = require('bcrypt')
+const  ApiError  = require('../utils/ApiError')
+const asyncHandler = require('../utils/asyncHandller')
 
-module.exports.CreateUser =async ({username,email,password,phone_no})=>{
-    if(!username || !email || !password || !phone_no){
-        throw new Error('[usermname,email,password,phone_no] all fiels are Require')
-    }
+module.exports.CreateUser = async ({username,email,password,phone_no})=>{
+   if (!username || !email || !password || !phone_no) {
+    throw new ApiError(400, '[username, email, password, phone_no] all fields are required');
+  }
 
-    let exist = await userModel.findOne({email});
-    if (exist){
-      throw new Error('User have alredy Exist')}
-    
-    const hashPassword = await userModel.hashPassword(password);
-  
-    const user = await userModel.create({
-      phone_no,
-      username,
-      email,
-      password: hashPassword,
-    });
-    
-    await user.save();
+  let exist = await userModel.findOne({ email });
+  if (exist) {
+    throw new ApiError(408, "User already exists!");
+  }
 
-    const createduser = await userModel.findById(user._id);
+  const hashPassword = await userModel.hashPassword(password);
 
-     if(!createduser){
-      throw new Error("Created User Not Present")
-     }
+  const user = await userModel.create({
+    phone_no,
+    username,
+    email,
+    password: hashPassword,
+  });
 
-    return createduser;
+  const createdUser = await userModel.findById(user._id);
+
+  if (!createdUser) {
+    throw new ApiError(500, "Server error during creating user!");
+  }
+
+  return createdUser;
 }
 
 module.exports.loginuser = async ({email,password})=>{

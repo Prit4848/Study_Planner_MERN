@@ -2,28 +2,30 @@ const userModel = require("../models/user-model");
 const blacklistModel = require("../models/blacklist-model");
 const userServices = require('../Services/user.services')
 const {validationResult} = require("express-validator");
+const ApiResponse = require("../utils/ApiResponse");
+const asyncHandler = require('../utils/asyncHandller')
 
 
 require("dotenv").config();
 
-module.exports.registerUser = async function (req, res) {
+module.exports.registerUser = asyncHandler(async function (req, res) {
   const error = validationResult(req)
   if(!error.isEmpty()){
     return res.status(404).json({error:error.array()})
   }
-  try {
+  // try {
     let { username, email, password, phone_no } = req.body;
 
-    const user = userServices.CreateUser({username,email,password,phone_no})
+    const user = await userServices.CreateUser({username,email,password,phone_no})
 
-    res.status(201).json({user:user})
-  } catch (err) {
-    res.status(500).json({
-      message:"server Error"
-    });
-    console.log(err);
-  }
-};
+    res.status(201).json(new ApiResponse(200,{user:user},"user Created Successfully!"))
+  // } catch (err) {
+  //   res.status(500).json({
+  //     message:"server Error"
+  //   });
+  //   console.log(err);
+  // }
+})
 
 module.exports.loginUser = async function (req, res) {
   const error = validationResult(req)
